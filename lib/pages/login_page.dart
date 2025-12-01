@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacementNamed(context, _routeByRole(selectedRole));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error ?? 'Error desconocido')),
+        SnackBar(content: Text(error)),
       );
     }
 
@@ -84,17 +84,17 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = false);
   }
 
-  // Retorna la ruta según el rol
+  // Ruta según rol
   String _routeByRole(String role) {
     switch (role) {
       case 'cliente':
-        return '/home';        // EditorPage
+        return '/home';
       case 'cocina':
-        return '/kitchen';     // KitchenPage
+        return '/kitchen';
       case 'repartidor':
-        return '/delivery';    // DeliveryPage
+        return '/delivery';
       case 'gerente':
-        return '/manager';     // ManagerPage
+        return '/manager';
       default:
         return '/home';
     }
@@ -103,81 +103,177 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login / Registro')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'El nombre es obligatorio';
-                  if (v.trim().length < 2) return 'Nombre muy corto';
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'El email es obligatorio';
-                  if (!_isValidEmail(v.trim())) return 'Email no válido';
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: passController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (v) {
-                  if (v == null || v.isEmpty) return 'La contraseña es obligatoria';
-                  if (v.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: selectedRole,
-                items: const [
-                  DropdownMenuItem(value: 'cliente', child: Text('Cliente')),
-                  DropdownMenuItem(value: 'cocina', child: Text('Cocina')),
-                  DropdownMenuItem(value: 'repartidor', child: Text('Repartidor')),
-                  DropdownMenuItem(value: 'gerente', child: Text('Gerente')),
-                ],
-                onChanged: (value) {
-                  if (value != null) selectedRole = value;
-                },
-                decoration: const InputDecoration(labelText: 'Rol'),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _register,
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Text('Registrarse'),
+      backgroundColor: const Color(0xFF1A1A1A),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Container(
+            width: 420,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFF242424),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.fastfood, color: Colors.orange, size: 60),
+                const SizedBox(height: 10),
+                const Text(
+                  "HamburGo",
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _login,
-                  child: const Text('Login'),
+                const Text(
+                  "Login / Registro",
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
-              ),
-            ],
+                const SizedBox(height: 30),
+
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Nombre
+                      TextFormField(
+                        controller: nameController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputStyle("Nombre", Icons.person),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'El nombre es obligatorio';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Email
+                      TextFormField(
+                        controller: emailController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputStyle("Email", Icons.email),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'El email es obligatorio';
+                          }
+                          if (!_isValidEmail(v)) return 'Email no válido';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Password
+                      TextFormField(
+                        controller: passController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputStyle("Contraseña", Icons.lock),
+                        obscureText: true,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return 'La contraseña es obligatoria';
+                          }
+                          if (v.length < 6) {
+                            return 'Debe tener al menos 6 caracteres';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Rol
+                      DropdownButtonFormField<String>(
+                        value: selectedRole,
+                        dropdownColor: const Color(0xFF2E2E2E),
+                        style: const TextStyle(color: Colors.white),
+                        decoration: _inputStyle("Rol", Icons.group),
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'cliente',
+                              child: Text('Cliente', style: TextStyle(color: Colors.white))),
+                          DropdownMenuItem(
+                              value: 'cocina',
+                              child: Text('Cocina', style: TextStyle(color: Colors.white))),
+                          DropdownMenuItem(
+                              value: 'repartidor',
+                              child: Text('Repartidor', style: TextStyle(color: Colors.white))),
+                          DropdownMenuItem(
+                              value: 'gerente',
+                              child: Text('Gerente', style: TextStyle(color: Colors.white))),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) selectedRole = value;
+                        },
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Botón registro
+                      _actionButton(
+                        label: "Registrarse",
+                        onPressed: _isLoading ? null : _register,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Botón login
+                      _actionButton(
+                        label: "Login",
+                        onPressed: _isLoading ? null : _login,
+                      ),
+
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 18),
+                          child: CircularProgressIndicator(color: Colors.orange),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  // --- COMPONENTES DE DISEÑO ---
+  InputDecoration _inputStyle(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(color: Colors.white70),
+      prefixIcon: Icon(icon, color: Colors.orange),
+      filled: true,
+      fillColor: const Color(0xFF2E2E2E),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+    );
+  }
+
+  Widget _actionButton({required String label, required VoidCallback? onPressed}) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Text(label,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
     );
   }

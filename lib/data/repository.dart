@@ -57,6 +57,7 @@ class Repository {
       Ingredient(id: _uuid.v4(), name: 'Cebolla', price: 0.25, stock: 25),
       Ingredient(id: _uuid.v4(), name: 'Huevo', price: 0.9, stock: 15),
       Ingredient(id: _uuid.v4(), name: 'Pepinillo', price: 0.2, stock: 25),
+      Ingredient(id: _uuid.v4(), name: 'Salchicha', price: 5, stock: 20),
     ];
     for (var i in base) _ingredients[i.id] = i;
   }

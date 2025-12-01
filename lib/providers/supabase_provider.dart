@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseProvider with ChangeNotifier {
   final SupabaseClient supabase = Supabase.instance.client;
 
+  SupabaseClient get client => supabase;
+
   // Registro de usuario
   Future<String?> signUp(String email, String password, String name, String role) async {
     try {
